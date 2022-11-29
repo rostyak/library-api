@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from library.serializers import BookSerializer
@@ -20,9 +21,16 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         extra_kwargs = {"days_to_return": {"write_only": True}}
 
     def create(self, validated_data):
-        days_to_return = validated_data.pop("days_to_return")
-        borrowing = Borrowing.objects.create(**validated_data)
-        borrowing.expected_return_date = get_expected_return_date(days_to_return)
+        with transaction.atomic():
+            days_to_return = validated_data.pop("days_to_return")
+
+            book = validated_data.pop("book")
+            book.inventory -= 1
+            book.save()
+
+            borrowing = Borrowing.objects.create(**validated_data)
+            borrowing.expected_return_date = get_expected_return_date(days_to_return)
+
         return borrowing
 
 
