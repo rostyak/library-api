@@ -19,6 +19,7 @@ class Borrowing(models.Model):
             expected_days=EXPECTED_DAYS_TO_RETURN
         ),
     )
+    days_to_return = models.IntegerField(blank=True, null=True)
     actual_return_date = models.DateField(blank=True, null=True)
     book = models.ForeignKey("library.Book", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

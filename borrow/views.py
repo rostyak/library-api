@@ -1,9 +1,13 @@
-from django.shortcuts import render
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 from borrow.models import Borrowing
-from borrow.serializers import BorrowingSerializer, BorrowingListSerializer, BorrowingDetailSerializer
+from borrow.serializers import (
+    BorrowingSerializer,
+    BorrowingListSerializer,
+    BorrowingDetailSerializer,
+    BorrowingCreateSerializer,
+)
 
 
 class BorrowingViewSet(
@@ -14,13 +18,24 @@ class BorrowingViewSet(
 ):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
+
+    @staticmethod
+    def _params_to_ints(qs):
+        return [int(str_id) for str_id in qs.split(",")]
 
     def get_queryset(self):
-        if not self.request.user.is_superuser:
-            queryset = Borrowing.objects.filter(user=self.request.user)
-        else:
+        if self.request.user.is_staff:
             queryset = self.queryset
+
+            users = self.request.query_params.get("user_id")
+
+            if users:
+                users_ids = self._params_to_ints(users)
+                queryset = queryset.filter(user__id__in=users_ids)
+
+        else:
+            queryset = Borrowing.objects.filter(user=self.request.user)
 
         is_active = self.request.query_params.get("is_active")
 
@@ -36,4 +51,10 @@ class BorrowingViewSet(
         if self.action == "retrieve":
             return BorrowingDetailSerializer
 
+        if self.action == "create":
+            return BorrowingCreateSerializer
+
         return BorrowingSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
