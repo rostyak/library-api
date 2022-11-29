@@ -15,7 +15,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             "expected_return_date",
             "actual_return_date",
             "book",
-            "days_to_return"
+            "days_to_return",
         )
         read_only_fields = ("expected_return_date",)
         extra_kwargs = {"days_to_return": {"write_only": True}}
@@ -29,13 +29,14 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             book.save()
 
             borrowing = Borrowing.objects.create(**validated_data)
-            borrowing.expected_return_date = get_expected_return_date(days_to_return)
+            borrowing.expected_return_date = get_expected_return_date(
+                days_to_return
+            )
 
         return borrowing
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Borrowing
         fields = (
@@ -49,9 +50,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
 
 class BorrowingListSerializer(BorrowingSerializer):
-    book_title = serializers.CharField(
-        source="book.title", read_only=True
-    )
+    book_title = serializers.CharField(source="book.title", read_only=True)
     user_who_take = serializers.CharField(
         source="user.username", read_only=True
     )
