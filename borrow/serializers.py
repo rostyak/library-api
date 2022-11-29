@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from library.serializers import BookSerializer
-from user.serializers import UserDetailSerializer
+from user.serializers import UserSerializer
 from borrow.models import Borrowing, get_expected_return_date
 
 
@@ -34,4 +34,4 @@ class BorrowingListSerializer(BorrowingSerializer):
 
 class BorrowingDetailSerializer(BorrowingSerializer):
     book = BookSerializer(many=False, read_only=True)
-    user = UserDetailSerializer(many=False, read_only=True)
+    user = UserSerializer(many=False, read_only=True)

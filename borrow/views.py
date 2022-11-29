@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from borrow.models import Borrowing
 from borrow.serializers import BorrowingSerializer, BorrowingListSerializer, BorrowingDetailSerializer
@@ -14,7 +14,7 @@ class BorrowingViewSet(
 ):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         if not self.request.user.is_superuser:
