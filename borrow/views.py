@@ -1,5 +1,7 @@
-from rest_framework import mixins, viewsets, generics
+from rest_framework import mixins, viewsets, generics, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from borrow.models import Borrowing
 from borrow.serializers import (
@@ -55,14 +57,27 @@ class BorrowingViewSet(
         if self.action == "create":
             return BorrowingCreateSerializer
 
+        if self.action == "return-borrowing":
+            return BorrowingReturnSerializer
+
         return BorrowingSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @action(
+        methods=["POST"],
+        detail=True,
+        url_path="return-borrowing",
+        permission_classes=[IsAuthenticated],
+    )
+    def return_borrowing(self, request, pk=None):
+        """Endpoint for uploading image to specific movie"""
+        borrowing = self.get_object()
+        serializer = BorrowingReturnSerializer(data=request.data)
 
-class BorrowingReturnView(mixins.UpdateModelMixin, generics.GenericAPIView):
-    serializer_class = BorrowingReturnSerializer
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def borrowing_return(self, request, *args, **kwargs):
-        pass
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

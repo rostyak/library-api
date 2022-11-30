@@ -84,17 +84,9 @@ class BorrowingDetailSerializer(BorrowingSerializer):
     user = UserSerializer(many=False, read_only=True)
 
 
-class BorrowingReturnSerializer(BorrowingSerializer):
-    def update(self, instance, validated_data):
-        actual_return_date = instance.get("actual_return_date", None)
-        if actual_return_date:
-            raise ValidationError("You cannot return borrowings twice")
-        instance.actual_return_date = validated_data["actual_return_date"]
-        return instance
+class BorrowingReturnSerializer(serializers.ModelSerializer):
 
-    # def validate(self, attrs):
-    #     data = super(BorrowingReturnSerializer, self).validate(attrs=attrs)
-    #     actual_return_date = attrs.get("actual_return_date")
-    #     if actual_return_date:
-    #         raise ValidationError("You cannot return borrowings twice")
-    #     return data
+    class Meta:
+        model = Borrowing
+        fields = ("id", "actual_return_date")
+
