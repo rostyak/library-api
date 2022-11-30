@@ -12,6 +12,7 @@ from borrow.serializers import (
     BorrowingCreateSerializer,
     BorrowingReturnSerializer,
 )
+from notifications.notification import send_message
 
 
 class BorrowingViewSet(
@@ -64,7 +65,8 @@ class BorrowingViewSet(
         return BorrowingSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        created_borrowing = serializer.save(user=self.request.user)
+        send_message(created_borrowing)
 
     @action(
         methods=["POST"],
