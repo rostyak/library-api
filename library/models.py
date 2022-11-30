@@ -36,3 +36,6 @@ class Book(models.Model):
         super(Book, self).save(
             force_insert, force_update, using, update_fields
         )
+
+    def __str__(self):
+        return f"{self.title} (inventory: {self.inventory})"
