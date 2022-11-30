@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
 from borrow.models import Borrowing
@@ -7,6 +7,7 @@ from borrow.serializers import (
     BorrowingListSerializer,
     BorrowingDetailSerializer,
     BorrowingCreateSerializer,
+    BorrowingReturnSerializer,
 )
 
 
@@ -58,3 +59,10 @@ class BorrowingViewSet(
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class BorrowingReturnView(mixins.UpdateModelMixin, generics.GenericAPIView):
+    serializer_class = BorrowingReturnSerializer
+
+    def borrowing_return(self, request, *args, **kwargs):
+        pass
