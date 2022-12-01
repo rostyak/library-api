@@ -2,7 +2,11 @@ from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from payment.models import Payment
-from payment.serializers import PaymentSerializer, PaymentDetailSerializer
+from payment.serializers import (
+    PaymentSerializer,
+    PaymentDetailSerializer,
+    PaymentCreateSerializer,
+)
 
 
 class PaymentViewSet(
@@ -25,5 +29,6 @@ class PaymentViewSet(
     def get_serializer_class(self):
         if self.action == "retrieve":
             return PaymentDetailSerializer
-
+        if self.action == "create":
+            return PaymentCreateSerializer
         return PaymentSerializer

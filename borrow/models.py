@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from borrow.shortcuts import get_expected_return_date
+from library_api.shortcuts import get_expected_return_date
 
 
 class Borrowing(models.Model):
