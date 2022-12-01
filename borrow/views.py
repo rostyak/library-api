@@ -1,5 +1,6 @@
 import datetime
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import mixins, viewsets, generics, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -69,6 +70,23 @@ class BorrowingViewSet(
     def perform_create(self, serializer):
         created_borrowing = serializer.save(user=self.request.user)
         send_message(created_borrowing)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "is_staff",
+                type={"type": "list", "items": {"type": "numbers"}},
+                description="Filter by user id (example ?user_id=1)"
+            ),
+            OpenApiParameter(
+                "is_active",
+                type={"type": "list", "items": {"type": "numbers"}},
+                description="Filter by book status (example ?is_active=True)"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     @action(
         methods=["POST"],
