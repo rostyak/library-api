@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import mixins, viewsets, generics, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -12,6 +14,7 @@ from borrow.serializers import (
     BorrowingCreateSerializer,
     BorrowingReturnSerializer,
 )
+from notifications.notification import send_message
 
 
 class BorrowingViewSet(
@@ -64,7 +67,8 @@ class BorrowingViewSet(
         return BorrowingSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        created_borrowing = serializer.save(user=self.request.user)
+        send_message(created_borrowing)
 
     @action(
         methods=["POST"],
@@ -74,9 +78,19 @@ class BorrowingViewSet(
     )
     def return_borrowing(self, request, pk=None):
         borrowing = self.get_object()
+        print(request.data)
 
         if borrowing.actual_return_date:
             raise ValidationError("You can not return book twice")
+        if borrowing.borrow_date > datetime.datetime.strptime(
+                request.data.get("actual_return_date"), "%Y-%m-%d"
+        ).date():
+            raise ValidationError(
+                {
+                    "actual_return_date":
+                    "Return date can not be earlier than borrow date"
+                }
+            )
 
         book = borrowing.book
         serializer = BorrowingReturnSerializer(borrowing, data=request.data)

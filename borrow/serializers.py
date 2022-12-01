@@ -20,7 +20,10 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             "book",
             "days_to_return",
         )
-        read_only_fields = ("expected_return_date", "actual_return_date",)
+        read_only_fields = (
+            "expected_return_date",
+            "actual_return_date",
+        )
         extra_kwargs = {"days_to_return": {"write_only": True}}
 
     def validate(self, attrs):
@@ -28,7 +31,9 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
         book = data["book"]
         if book.inventory < 1:
-            raise ValidationError({"inventory": "There must be books on shelf"})
+            raise ValidationError(
+                {"inventory": "There must be books on shelf"}
+            )
 
         return data
 
@@ -61,7 +66,10 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "book",
             "user",
         )
-        read_only_fields = ("expected_return_date", "actual_return_date",)
+        read_only_fields = (
+            "expected_return_date",
+            "actual_return_date",
+        )
 
 
 class BorrowingListSerializer(BorrowingSerializer):
@@ -80,7 +88,10 @@ class BorrowingListSerializer(BorrowingSerializer):
             "book_title",
             "user_who_take",
         )
-        read_only_fields = ("expected_return_date", "actual_return_date",)
+        read_only_fields = (
+            "expected_return_date",
+            "actual_return_date",
+        )
 
 
 class BorrowingDetailSerializer(BorrowingSerializer):
@@ -92,4 +103,17 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Borrowing
-        fields = ("id", "actual_return_date")
+        fields = ("id", "actual_return_date", "borrow_date")
+
+    def validate(self, attrs):
+        data = super(BorrowingReturnSerializer, self).validate(attrs=attrs)
+
+        if data["actual_return_date"] > datetime.date.today():
+            raise ValidationError(
+                {
+                    "actual_return_date":
+                    "Actual return date con not be in future"
+                }
+            )
+
+        return data
