@@ -1,23 +1,25 @@
-from rest_framework import viewsets, mixins
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
 
 from payment.models import Payment
 from payment.serializers import (
     PaymentSerializer,
     PaymentDetailSerializer,
-    PaymentCreateSerializer,
+    PaymentListSerializer,
+    PaymentCreateSerializer
 )
 
 
 class PaymentViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
     model = Payment
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         queryset = Payment.objects.select_related("borrowing")
@@ -27,10 +29,10 @@ class PaymentViewSet(
         return queryset
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
-            return PaymentDetailSerializer
+        if self.action == "list":
+            return PaymentListSerializer
         if self.action == "create":
             return PaymentCreateSerializer
-        if self.action == "list":
-            return PaymentCreateSerializer
+        if self.action == "retrieve":
+            return PaymentDetailSerializer
         return PaymentSerializer

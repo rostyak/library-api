@@ -10,3 +10,5 @@ requests==2.28.1
 django-payments~=1.0.0
 APScheduler~=3.9.1.post1
 
+
+stripe~=5.0.0
