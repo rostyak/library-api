@@ -9,21 +9,17 @@ class Book(models.Model):
     title = models.CharField(max_length=255)
     authors = models.CharField(max_length=255)
 
-    cover = models.CharField(
-        max_length=255,
-        choices=COVER_CHOICES
-    )
+    cover = models.CharField(max_length=255, choices=COVER_CHOICES)
 
-    inventory = models.IntegerField(
-        validators=[MinValueValidator(1)]
-    )
+    inventory = models.IntegerField(validators=[MinValueValidator(1)])
 
     daily_fee = models.DecimalField(max_digits=5, decimal_places=2)
 
     def clean(self):
         if self.inventory < 1:
-            raise ValidationError(f"Ensure this value is greater "
-                                  f"than or equal to 1.")
+            raise ValidationError(
+                f"Ensure this value is greater " f"than or equal to 1."
+            )
 
     def save(
         self,
@@ -33,9 +29,7 @@ class Book(models.Model):
         update_fields=None,
     ):
         self.full_clean()
-        super(Book, self).save(
-            force_insert, force_update, using, update_fields
-        )
+        super(Book, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return f"{self.title} (inventory: {self.inventory})"

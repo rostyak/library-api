@@ -34,17 +34,14 @@ class AuthenticatedBorrowingApiTests(TestCase):
             "authors": "Sample authors",
             "cover": "S",
             "inventory": 1,
-            "daily_fee": "00.11"
+            "daily_fee": "00.11",
         }
         defaults.update(params)
 
         return Book.objects.create(**defaults)
 
     def sample_borrowing(self, **params):
-        defaults = {
-            "book": self.sample_book(),
-            "user": self.user
-        }
+        defaults = {"book": self.sample_book(), "user": self.user}
         defaults.update(params)
 
         return Borrowing.objects.create(**defaults)
@@ -83,9 +80,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
         borrowing1.actual_return_date = datetime.date.today()
         borrowing1.save()
 
-        res = self.client.get(
-            BORROWING_URL, {"is_active": True}
-        )
+        res = self.client.get(BORROWING_URL, {"is_active": True})
 
         serializer1 = BorrowingListSerializer(borrowing1)
         serializer2 = BorrowingListSerializer(borrowing2)
@@ -99,9 +94,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
         borrowing1 = self.sample_borrowing()
         borrowing2 = self.sample_borrowing()
 
-        res = self.admin.get(
-            BORROWING_URL, {"user_id": "2"}
-        )
+        res = self.admin.get(BORROWING_URL, {"user_id": "2"})
 
         serializer1 = BorrowingListSerializer(borrowing1)
         serializer2 = BorrowingListSerializer(borrowing2)
@@ -113,9 +106,7 @@ class AuthenticatedBorrowingApiTests(TestCase):
         borrowing1 = self.sample_borrowing()
         borrowing2 = self.sample_borrowing()
 
-        res = self.client.get(
-            BORROWING_URL, {"user_id": "2"}
-        )
+        res = self.client.get(BORROWING_URL, {"user_id": "2"})
 
         serializer1 = BorrowingListSerializer(borrowing1)
         serializer2 = BorrowingListSerializer(borrowing2)

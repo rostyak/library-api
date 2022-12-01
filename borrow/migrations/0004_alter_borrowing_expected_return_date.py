@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('borrow', '0003_alter_borrowing_expected_return_date'),
+        ("borrow", "0003_alter_borrowing_expected_return_date"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='borrowing',
-            name='expected_return_date',
+            model_name="borrowing",
+            name="expected_return_date",
             field=models.DateField(default=datetime.date(2022, 12, 11), null=True),
         ),
     ]
