@@ -1,12 +1,14 @@
 import datetime
 
+from django.conf import settings
 from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from borrow.shortcuts import get_expected_return_date
 from library.serializers import BookSerializer
 from user.serializers import UserSerializer
-from borrow.models import Borrowing, get_expected_return_date
+from borrow.models import Borrowing
 
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
@@ -48,9 +50,12 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             validated_data["book"] = book
 
             borrowing = Borrowing.objects.create(**validated_data)
-            borrowing.expected_return_date = get_expected_return_date(
-                days_to_return
-            )
+
+            if days_to_return:
+                borrowing.expected_return_date = get_expected_return_date(
+                    days_to_return
+                )
+                borrowing.save()
 
         return borrowing
 
