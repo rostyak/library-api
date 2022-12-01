@@ -31,4 +31,6 @@ class PaymentViewSet(
             return PaymentDetailSerializer
         if self.action == "create":
             return PaymentCreateSerializer
+        if self.action == "list":
+            return PaymentCreateSerializer
         return PaymentSerializer
