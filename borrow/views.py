@@ -82,13 +82,15 @@ class BorrowingViewSet(
 
         if borrowing.actual_return_date:
             raise ValidationError("You can not return book twice")
-        if borrowing.borrow_date > datetime.datetime.strptime(
+        if (
+            borrowing.borrow_date
+            > datetime.datetime.strptime(
                 request.data.get("actual_return_date"), "%Y-%m-%d"
-        ).date():
+            ).date()
+        ):
             raise ValidationError(
                 {
-                    "actual_return_date":
-                    "Return date can not be earlier than borrow date"
+                    "actual_return_date": "Return date can not be earlier than borrow date"
                 }
             )
 

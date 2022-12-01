@@ -46,10 +46,13 @@ class PaymentCreateSerializer(PaymentListSerializer):
         start_date = borrowing.borrow_date
         end_date = borrowing.actual_return_date
 
-        money_to_pay = get_days_for_payment(end_date, start_date) * float(
-            borrowing.book.daily_fee
+        money_to_pay = (
+            int(
+                get_days_for_payment(end_date, start_date)
+                * float(borrowing.book.daily_fee)
+            )
+            * 100
         )
-        print(money_to_pay)
 
         session = stripe.checkout.Session.create(
             line_items=[
@@ -65,8 +68,8 @@ class PaymentCreateSerializer(PaymentListSerializer):
                 }
             ],
             mode="payment",
-            success_url="http://127.0.0.1:8000/api/success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url="http://127.0.0.1:8000/api/cancel",
+            success_url="",  # TODO
+            cancel_url="",  # TODO
         )
         return Payment.objects.create(
             status_payment=status_payment,

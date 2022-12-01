@@ -32,9 +32,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
         book = data["book"]
         if book.inventory < 1:
-            raise ValidationError(
-                {"inventory": "There must be books on shelf"}
-            )
+            raise ValidationError({"inventory": "There must be books on shelf"})
 
         return data
 
@@ -78,9 +76,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
 class BorrowingListSerializer(BorrowingSerializer):
     book_title = serializers.CharField(source="book.title", read_only=True)
-    user_who_take = serializers.CharField(
-        source="user.username", read_only=True
-    )
+    user_who_take = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
         model = Borrowing
@@ -104,7 +100,6 @@ class BorrowingDetailSerializer(BorrowingSerializer):
 
 
 class BorrowingReturnSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Borrowing
         fields = ("id", "actual_return_date", "borrow_date")
@@ -114,10 +109,7 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
 
         if data["actual_return_date"] > datetime.date.today():
             raise ValidationError(
-                {
-                    "actual_return_date":
-                    "Actual return date con not be in future"
-                }
+                {"actual_return_date": "Actual return date con not be in future"}
             )
 
         return data

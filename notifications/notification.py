@@ -11,19 +11,21 @@ CHAT_ID = os.environ.get("CHAT_ID")
 def send_message(borrowing):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?"
 
-    message = (f"Created new borrowing!\n"
-               f"Book: {borrowing.book}\n"
-               f"Borrow date: {borrowing.borrow_date}\n"
-               f"Expected return date: {borrowing.expected_return_date}")
+    message = (
+        f"Created new borrowing!\n"
+        f"Book: {borrowing.book}\n"
+        f"Borrow date: {borrowing.borrow_date}\n"
+        f"Expected return date: {borrowing.expected_return_date}"
+    )
 
-    data = {'chat_id': CHAT_ID, 'text': message}
+    data = {"chat_id": CHAT_ID, "text": message}
 
     requests.post(url, data)
 
 
 def message_sent(message: str):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?"
-    data = {'chat_id': CHAT_ID, 'text': message}
+    data = {"chat_id": CHAT_ID, "text": message}
     response = requests.get(url, data)
     return response.status_code
 
@@ -45,5 +47,6 @@ def send_overdue_message():
             f"Borrowing id: {borrowing.id}\n"
             f"Book name: “{borrowing.book}”, {borrowing.book.authors}\n"
             f"Borrow Date: {borrowing.borrow_date}\n"
-            f"Expected return date: {borrowing.expected_return_date}")
+            f"Expected return date: {borrowing.expected_return_date}"
+        )
         message_sent(message)

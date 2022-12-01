@@ -15,9 +15,7 @@ class Borrowing(models.Model):
     days_to_return = models.IntegerField(blank=True, null=True)
     actual_return_date = models.DateField(blank=True, null=True)
     book = models.ForeignKey("library.Book", on_delete=models.CASCADE)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return (
